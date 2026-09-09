@@ -1,0 +1,31 @@
+{
+  "id": "02-attestation-control-never-ran",
+  "tier": "attestation",
+  "title": "Perfect signature, control that could never execute",
+  "why": "THE case this corpus exists for. The receipt attests 2/2 controls passed; one names an ML model the issuer does not implement, so it was never evaluated. The signature is valid and every envelope-only verifier reports VALID.",
+  "receipt": "eyJhbGciOiJFZERTQSIsImtpZCI6ImR1dmVyYS1rZXktMSIsInR5cCI6ImR1dmVyYStqd3QifQ.eyJhY3RvciI6eyJpZCI6InN1cHBvcnQtYWdlbnQiLCJyb2xlIjoic3VwcG9ydCJ9LCJhdWQiOlsiQGFjbWUvZmluYW5jZS5yZWZ1bmQiXSwiY2FwYWJpbGl0eSI6IkBhY21lL2ZpbmFuY2UucmVmdW5kIiwiY2FwYWJpbGl0eV92ZXJzaW9uIjoiMS4wLjAiLCJjb25zdHJhaW50c19ldmFsdWF0ZWQiOjIsImNvbnN0cmFpbnRzX3Bhc3NlZCI6MiwiZXZhbHVhdGlvbl9kaWdlc3QiOiIiLCJleHAiOjE3ODg5MjY3MjQsImlhdCI6MTc4ODkyNjY2NCwiaW5wdXRzX2hhc2giOiIxMjU2NzZlYzc3MzNmM2QzYjdhNDNiN2NhMDEzMTI4MWJmYWZmM2M1NDA4NTE0NGI4M2RkNTBkYjE3MzQ1NWZiIiwiaXNzIjoiZ3c6Ly9jb25mb3JtYW5jZS5leGFtcGxlIiwianRpIjoidG9rXzY4ODlmMDg5MDY1ODEyMzIiLCJuYW1lc3BhY2UiOiJhY21lIiwicG9saWN5X2RpZ2VzdCI6IjE2ZjIyM2E1MjhiOGMwZjZmMmNlMDEzZjdkOTk3YzlkOWE4ZDczZDE2NGQwOTBiNDE4MTljOTIxZDAwM2E2OTAiLCJwcmV2X3JlY2VpcHRfaGFzaCI6ImZkYmExY2JhMDBkMmNiZjIwOTBlZGY1ZTI1ODBhNDNjNDdhOGZhYWI2YWE1Y2NkMmNlZGIzYmYzNjMzZjc3MWEiLCJwcm90b2NvbCI6ImZpbmFuY2UucmVmdW5kIiwic3ViIjoiZXhlY19jb3JwdXMifQ.tNiAgxNJ2WfhRlu-cPEDSTPwTUgVy4CYGw1P-foYJJQBU-V3dJE6H6BN0PyK3xdd1Wj8nVA7YtzoObj8bFqDAA",
+  "jwks": {
+    "keys": [
+      {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "use": "sig",
+        "alg": "EdDSA",
+        "kid": "duvera-key-1",
+        "x": "L2zUsshmMHFbYDp6ys8DpFs07QVvKgIbjuCEfCa3vGQ"
+      }
+    ]
+  },
+  "manifest": "capability:\n  id: \"@acme/finance.refund\"\n  version: 1.0.0\n  name: Refund\n  description: Issue a customer refund.\n  risk_level: high\n  provider: {org: acme, type: internal, verified: true}\n  implements: finance.refund\n  inputs:\n    - name: amount\n      type: number\n      required: true\n    - name: customer_id\n      type: string\n      required: true\n  constraints:\n    - type: threshold\n      name: refund_cap\n      description: Refunds are capped at $5,000.\n      field: amount\n      max: 5000\n    - type: anomaly_check\n      name: refund_fraud_check\n      description: Check for anomalous refund patterns\n      model: refund_risk_v2\n      threshold: 0.8\n      block_on_high_risk: true\n  execution:\n    handler: {type: noop, message: \"ok\"}\n",
+  "inputs": {
+    "amount": 42,
+    "customer_id": "cust_alice"
+  },
+  "expect": {
+    "envelope_valid": true,
+    "attestation_conformant": false,
+    "failing_checks": [
+      "controls_enforceable"
+    ]
+  }
+}

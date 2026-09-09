@@ -1,0 +1,31 @@
+{
+  "id": "05-attestation-wrong-policy",
+  "tier": "attestation",
+  "title": "A receipt issued under a different policy than the one supplied",
+  "why": "The receipt is genuine and the manifest is genuine; they are not about each other. Without this check every other attestation check is being applied to a policy that was never used.",
+  "receipt": "eyJhbGciOiJFZERTQSIsImtpZCI6ImR1dmVyYS1rZXktMSIsInR5cCI6ImR1dmVyYStqd3QifQ.eyJhY3RvciI6eyJpZCI6InN1cHBvcnQtYWdlbnQiLCJyb2xlIjoic3VwcG9ydCJ9LCJhdWQiOlsiQGFjbWUvZmluYW5jZS5yZWZ1bmQiXSwiY2FwYWJpbGl0eSI6IkBhY21lL2ZpbmFuY2UucmVmdW5kIiwiY2FwYWJpbGl0eV92ZXJzaW9uIjoiMS4wLjAiLCJjb25zdHJhaW50c19ldmFsdWF0ZWQiOjEsImNvbnN0cmFpbnRzX3Bhc3NlZCI6MSwiZXZhbHVhdGlvbl9kaWdlc3QiOiIiLCJleHAiOjE3ODg5MjY3MjQsImlhdCI6MTc4ODkyNjY2NCwiaW5wdXRzX2hhc2giOiIxMjU2NzZlYzc3MzNmM2QzYjdhNDNiN2NhMDEzMTI4MWJmYWZmM2M1NDA4NTE0NGI4M2RkNTBkYjE3MzQ1NWZiIiwiaXNzIjoiZ3c6Ly9jb25mb3JtYW5jZS5leGFtcGxlIiwianRpIjoidG9rXzE0YzgwZTk5ZDYwNzE1ZDAiLCJuYW1lc3BhY2UiOiJhY21lIiwicG9saWN5X2RpZ2VzdCI6ImRjOWZlOGJjODA4YTJhMmVkYzE1MjllY2NhMjQwOWY1ZmEyYzg0MmU4MTg1YTdjNWQ2MDY4NjM1NTcxYjhhZTUiLCJwcmV2X3JlY2VpcHRfaGFzaCI6IjE0NTU5N2FkMmY0OWM3ZjMwYTg1MTczM2FlN2ZlNTdhZDMzNDFiMTk1YWYzYThiNTljZTRjN2RmZmJiMTA1ZjEiLCJwcm90b2NvbCI6ImZpbmFuY2UucmVmdW5kIiwic3ViIjoiZXhlY19jb3JwdXMifQ.hRhGi0sElBRq_t3jxOYdjcFhH5AcG2wokrO2GWwW5iZAzf0xrSlleayWTq8oOaqbkypCB2U77NbIqEH4IFc8CA",
+  "jwks": {
+    "keys": [
+      {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "use": "sig",
+        "alg": "EdDSA",
+        "kid": "duvera-key-1",
+        "x": "L2zUsshmMHFbYDp6ys8DpFs07QVvKgIbjuCEfCa3vGQ"
+      }
+    ]
+  },
+  "manifest": "capability:\n  id: \"@acme/finance.refund\"\n  version: 1.0.0\n  name: Refund\n  description: Issue a customer refund.\n  risk_level: high\n  provider: {org: acme, type: internal, verified: true}\n  implements: finance.refund\n  inputs:\n    - name: amount\n      type: number\n      required: true\n    - name: customer_id\n      type: string\n      required: true\n  constraints:\n    - type: threshold\n      name: refund_cap\n      description: Refunds are capped at $5,000.\n      field: amount\n      max: 5000\n    - type: anomaly_check\n      name: refund_fraud_check\n      description: Check for anomalous refund patterns\n      model: refund_risk_v2\n      threshold: 0.8\n      block_on_high_risk: true\n  execution:\n    handler: {type: noop, message: \"ok\"}\n",
+  "inputs": {
+    "amount": 42,
+    "customer_id": "cust_alice"
+  },
+  "expect": {
+    "envelope_valid": true,
+    "attestation_conformant": false,
+    "failing_checks": [
+      "policy_digest_matches"
+    ]
+  }
+}

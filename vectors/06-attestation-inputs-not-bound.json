@@ -1,0 +1,31 @@
+{
+  "id": "06-attestation-inputs-not-bound",
+  "tier": "attestation",
+  "title": "A valid receipt presented as evidence about a different call",
+  "why": "The receipt authorized amount=42. It is offered as evidence for amount=9000. Also the canonicalization trap: an implementation that decodes JSON numbers as floats computes a different inputs_hash for the SAME document and fails this vector for the wrong reason.",
+  "receipt": "eyJhbGciOiJFZERTQSIsImtpZCI6ImR1dmVyYS1rZXktMSIsInR5cCI6ImR1dmVyYStqd3QifQ.eyJhY3RvciI6eyJpZCI6InN1cHBvcnQtYWdlbnQiLCJyb2xlIjoic3VwcG9ydCJ9LCJhdWQiOlsiQGFjbWUvZmluYW5jZS5yZWZ1bmQiXSwiY2FwYWJpbGl0eSI6IkBhY21lL2ZpbmFuY2UucmVmdW5kIiwiY2FwYWJpbGl0eV92ZXJzaW9uIjoiMS4wLjAiLCJjb25zdHJhaW50c19ldmFsdWF0ZWQiOjEsImNvbnN0cmFpbnRzX3Bhc3NlZCI6MSwiZXZhbHVhdGlvbl9kaWdlc3QiOiIiLCJleHAiOjE3ODg5MjY3MjQsImlhdCI6MTc4ODkyNjY2NCwiaW5wdXRzX2hhc2giOiIxMjU2NzZlYzc3MzNmM2QzYjdhNDNiN2NhMDEzMTI4MWJmYWZmM2M1NDA4NTE0NGI4M2RkNTBkYjE3MzQ1NWZiIiwiaXNzIjoiZ3c6Ly9jb25mb3JtYW5jZS5leGFtcGxlIiwianRpIjoidG9rXzk5NWFhZTgzNGE1MDkzYmQiLCJuYW1lc3BhY2UiOiJhY21lIiwicG9saWN5X2RpZ2VzdCI6ImRjOWZlOGJjODA4YTJhMmVkYzE1MjllY2NhMjQwOWY1ZmEyYzg0MmU4MTg1YTdjNWQ2MDY4NjM1NTcxYjhhZTUiLCJwcmV2X3JlY2VpcHRfaGFzaCI6IjRiOTUzZDU0ODM0NDFjZDIwNGNhMjA5NjJjMDIwZGEzYjM3NDE0OWU5MjU4Yjk2Y2ZkOGUxMTE3ODNkN2UwZTAiLCJwcm90b2NvbCI6ImZpbmFuY2UucmVmdW5kIiwic3ViIjoiZXhlY19jb3JwdXMifQ.LKJQTtoJPZWW7-BPtmeXNM85s-y8kLhFUssj-3Bz3sPdJEOBFYADbHscDj-Yku-feBjbsaD12hRHUZRXMDDmDw",
+  "jwks": {
+    "keys": [
+      {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "use": "sig",
+        "alg": "EdDSA",
+        "kid": "duvera-key-1",
+        "x": "L2zUsshmMHFbYDp6ys8DpFs07QVvKgIbjuCEfCa3vGQ"
+      }
+    ]
+  },
+  "manifest": "capability:\n  id: \"@acme/finance.refund\"\n  version: 1.0.0\n  name: Refund\n  description: Issue a customer refund.\n  risk_level: high\n  provider: {org: acme, type: internal, verified: true}\n  implements: finance.refund\n  inputs:\n    - name: amount\n      type: number\n      required: true\n    - name: customer_id\n      type: string\n      required: true\n  constraints:\n    - type: threshold\n      name: refund_cap\n      description: Refunds are capped at $5,000.\n      field: amount\n      max: 5000\n  execution:\n    handler: {type: noop, message: \"ok\"}\n",
+  "inputs": {
+    "amount": 9000,
+    "customer_id": "cust_alice"
+  },
+  "expect": {
+    "envelope_valid": true,
+    "attestation_conformant": false,
+    "failing_checks": [
+      "inputs_bound"
+    ]
+  }
+}

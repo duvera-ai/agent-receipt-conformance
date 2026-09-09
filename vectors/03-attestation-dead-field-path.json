@@ -1,0 +1,27 @@
+{
+  "id": "03-attestation-dead-field-path",
+  "tier": "attestation",
+  "title": "A cap whose field path always resolves to nothing",
+  "why": "Nastier than 02 because the constraint TYPE is valid. The path uses a wildcard and an aggregate the resolver has neither, so the field reads as absent and the cap is skipped-as-passed on every call, forever.",
+  "receipt": "eyJhbGciOiJFZERTQSIsImtpZCI6ImR1dmVyYS1rZXktMSIsInR5cCI6ImR1dmVyYStqd3QifQ.eyJhY3RvciI6eyJpZCI6InN1cHBvcnQtYWdlbnQiLCJyb2xlIjoic3VwcG9ydCJ9LCJhdWQiOlsiQGFjbWUvY29tbXMuc2VuZCJdLCJjYXBhYmlsaXR5IjoiQGFjbWUvY29tbXMuc2VuZCIsImNhcGFiaWxpdHlfdmVyc2lvbiI6IjEuMC4wIiwiY29uc3RyYWludHNfZXZhbHVhdGVkIjoxLCJjb25zdHJhaW50c19wYXNzZWQiOjEsImV2YWx1YXRpb25fZGlnZXN0IjoiIiwiZXhwIjoxNzg4OTI2NzI0LCJpYXQiOjE3ODg5MjY2NjQsImlucHV0c19oYXNoIjoiMWRhNjNhZTFkMWM2NGY0NTQ5Y2VjZTU4NTU1YjIzZWYyNTNhYTdiYjJjNWNhNmM0OGMxMjkxODg2M2NmZjUxYSIsImlzcyI6Imd3Oi8vY29uZm9ybWFuY2UuZXhhbXBsZSIsImp0aSI6InRva18xOTAxNWI2OGUxNDY2ZGNlIiwibmFtZXNwYWNlIjoiYWNtZSIsInBvbGljeV9kaWdlc3QiOiJiYTZiMzc3NTBkYmZjN2Y2ZGVlYTNlOTU3NzU2ZTJlYzg2YjVjYzkzZjEzNjAzOGNjZGVkMDk5MjgwODc4NDJmIiwicHJldl9yZWNlaXB0X2hhc2giOiI5ZmVjNTU4MjhjYTViMmY5NzJkNjNhMDQ3NDgxMGIwOGZjNTg0YWI1Njg5OGYzZWY4OGRhODQ1Y2M2OTJmYTQ4IiwicHJvdG9jb2wiOiJjb21tcy5zZW5kIiwic3ViIjoiZXhlY19jb3JwdXMifQ.uGIwq9LTCiBo9JUwuzi7g_bBoxgAWOJsjg8IO6cVLXu0RBZlzoSB-4BLCfwuUVBgpen7aRkn_u-yvEJLZDkJAw",
+  "jwks": {
+    "keys": [
+      {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "use": "sig",
+        "alg": "EdDSA",
+        "kid": "duvera-key-1",
+        "x": "L2zUsshmMHFbYDp6ys8DpFs07QVvKgIbjuCEfCa3vGQ"
+      }
+    ]
+  },
+  "manifest": "capability:\n  id: \"@acme/comms.send\"\n  version: 1.0.0\n  name: Send\n  description: Send a message with attachments.\n  risk_level: medium\n  provider: {org: acme, type: internal, verified: true}\n  implements: comms.send\n  inputs:\n    - name: body\n      type: string\n      required: true\n  constraints:\n    - type: threshold\n      name: total_attachment_size\n      description: Maximum 25MB total attachment size\n      field: attachments.*.size_bytes.sum()\n      max: 25000000\n  execution:\n    handler: {type: noop, message: \"ok\"}\n",
+  "expect": {
+    "envelope_valid": true,
+    "attestation_conformant": false,
+    "failing_checks": [
+      "controls_enforceable"
+    ]
+  }
+}
